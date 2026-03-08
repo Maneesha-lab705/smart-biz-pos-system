@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-02-21T22:22:08+0530",
+    date = "2026-03-05T15:14:11+0530",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -29,9 +29,9 @@ public class SaleItemMapperImpl implements SaleItemMapper {
         saleItemDTO.setProductId( saleItemProductProductId( saleItem ) );
         saleItemDTO.setBatchId( saleItemBatchBatchId( saleItem ) );
         saleItemDTO.setBatchNumber( saleItemBatchBatchNumber( saleItem ) );
+        saleItemDTO.setTotalAmount( saleItem.getAmount() );
         saleItemDTO.setSaleItemId( saleItem.getSaleItemId() );
         saleItemDTO.setQty( saleItem.getQty() );
-        saleItemDTO.setTotalAmount( saleItem.getTotalAmount() );
 
         return saleItemDTO;
     }
@@ -44,8 +44,8 @@ public class SaleItemMapperImpl implements SaleItemMapper {
 
         SaleItem.SaleItemBuilder saleItem = SaleItem.builder();
 
+        saleItem.amount( dto.getTotalAmount() );
         saleItem.qty( dto.getQty() );
-        saleItem.totalAmount( dto.getTotalAmount() );
 
         return saleItem.build();
     }

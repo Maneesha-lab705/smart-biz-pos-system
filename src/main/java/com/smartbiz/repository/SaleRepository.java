@@ -21,7 +21,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             Long businessId, Date from, Date to);
 
     // Total revenue in date range
-    @Query("SELECT COALESCE(SUM(si.totalAmount), 0) FROM SaleItem si " +
+    @Query("SELECT COALESCE(SUM(si.amount), 0) FROM SaleItem si " +
            "WHERE si.sale.business.businessId = :businessId " +
            "AND si.sale.createdAt BETWEEN :from AND :to")
     Double getTotalRevenueByBusinessAndDateRange(

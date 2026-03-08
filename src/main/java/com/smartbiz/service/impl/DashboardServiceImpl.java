@@ -93,8 +93,8 @@ public class DashboardServiceImpl implements DashboardService {
                         .customerName(s.getCustomer() != null ? s.getCustomer().getName() : "Walk-in")
                         .amount(s.getSaleItems() != null
                                 ? s.getSaleItems().stream()
-                                .mapToDouble(si -> si.getTotalAmount() != null
-                                        ? si.getTotalAmount().doubleValue()
+                                .mapToDouble(si -> si.getAmount() != null
+                                        ? si.getAmount().doubleValue()
                                         : 0.0)
                                 .sum()
                                 : 0.0)
@@ -151,7 +151,7 @@ public class DashboardServiceImpl implements DashboardService {
                 String day = sdfDay.format(s.getCreatedAt());
                 Double saleTotal = s.getSaleItems() != null
                         ? s.getSaleItems().stream()
-                        .mapToDouble(si -> si.getTotalAmount() != null ? si.getTotalAmount().doubleValue() : 0.0)
+                        .mapToDouble(si -> si.getAmount() != null ? si.getAmount().doubleValue() : 0.0)
                         .sum()
                         : 0.0;
                 dailyRevMap.merge(day, saleTotal, Double::sum);

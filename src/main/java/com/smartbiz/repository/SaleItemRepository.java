@@ -15,7 +15,7 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Long> {
     List<SaleItem> findAllBySaleSaleId(Long saleId);
 
     // Top selling products: returns [productId, productName(?), totalQty, totalRevenue]
-    @Query("SELECT si.product.productId, SUM(si.qty), SUM(si.totalAmount) " +
+    @Query("SELECT si.product.productId, SUM(si.qty), SUM(si.amount) " +
            "FROM SaleItem si " +
            "WHERE si.sale.business.businessId = :businessId " +
            "GROUP BY si.product.productId " +

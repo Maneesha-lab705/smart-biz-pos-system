@@ -1,10 +1,11 @@
-//package com.smartbiz.dto.ai;
-//
-//import lombok.*;
-//
-//@Data @NoArgsConstructor @AllArgsConstructor @Builder
-//public class AiResponse {
-//    private String result;
-//    private String type;   // REPORT, EMAIL, MARKETING
-//}
-////
+package com.smartbiz.dto.ai;
+
+import lombok.*;
+
+@Data
+@AllArgsConstructor
+public class AiResponse {
+    private boolean success;  // 1st
+    private String result;    // 2nd
+    private String error;     // 3rd
+}
