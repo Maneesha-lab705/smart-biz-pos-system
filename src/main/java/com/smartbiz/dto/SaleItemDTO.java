@@ -11,7 +11,7 @@ public class SaleItemDTO implements SuperDTO {
     private Long productId;
     private Long batchId;
     private String batchNumber;
-    private BigDecimal unitPrice;
+    private Double unitPrice;
     private Integer qty;
     private Double totalAmount;
 }

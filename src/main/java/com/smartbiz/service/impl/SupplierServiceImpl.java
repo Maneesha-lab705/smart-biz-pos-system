@@ -19,29 +19,27 @@ public class SupplierServiceImpl implements SupplierService {
 
     // DTO -> Entity
     private Supplier toEntity(SupplierDTO dto) {
-        Supplier supplier = new Supplier();
-        supplier.setSupplierId(dto.getSupplierId());
-        supplier.setName(dto.getName());
-        supplier.setContact(dto.getContact());
-        supplier.setEmail(dto.getEmail());
-        return supplier;
+        return Supplier.builder()
+                .name(dto.getName())
+                .contact(dto.getContact())
+                .email(dto.getEmail())
+                .build();
     }
 
     // Entity -> DTO
     private SupplierDTO toDTO(Supplier supplier) {
-        SupplierDTO dto = new SupplierDTO();
-        dto.setSupplierId(supplier.getSupplierId());
-        dto.setName(supplier.getName());
-        dto.setContact(supplier.getContact());
-        dto.setEmail(supplier.getEmail());
-        return dto;
+        return new SupplierDTO(
+                supplier.getSupplierId(),
+                supplier.getName(),
+                supplier.getContact(),
+                supplier.getEmail()
+        );
     }
-
     @Override
     public SuperDTO createSupplier(SupplierDTO dto) {
-        Supplier supplier = toEntity(dto);
-        Supplier saved = supplierRepository.save(supplier);
-        return toDTO(saved);
+        Supplier supplier = toEntity(dto);       // DTO -> Entity
+        Supplier saved = supplierRepository.save(supplier);  // DB save
+        return toDTO(saved);                     // Entity -> DTO return
     }
 
     @Override

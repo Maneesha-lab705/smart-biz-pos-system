@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public class ProductDTO implements SuperDTO {
     private Long productId;
     private String ProductName;
-    private int QTY;
+    private int qty;
     private String status;
     private Double sellingPrice;
     private Double billingPrice;

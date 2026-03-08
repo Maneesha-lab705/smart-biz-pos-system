@@ -16,7 +16,10 @@ public class SaleItem {
     private Long saleItemId;
 
     private Integer qty;
-    private Double totalAmount;
+    private Double amount;
+
+    private Double unitPrice;
+    private Double costPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "batch_id")

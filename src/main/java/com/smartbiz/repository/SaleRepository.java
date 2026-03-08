@@ -21,7 +21,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             Long businessId, Date from, Date to);
 
     // Total revenue in date range
-    @Query("SELECT COALESCE(SUM(si.totalAmount), 0) FROM SaleItem si " +
+    @Query("SELECT COALESCE(SUM(si.amount), 0) FROM SaleItem si " +
            "WHERE si.sale.business.businessId = :businessId " +
            "AND si.sale.createdAt BETWEEN :from AND :to")
     Double getTotalRevenueByBusinessAndDateRange(
@@ -30,10 +30,9 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             @Param("to") Date to);
 
     // Total cost in date range (from batch cost price * qty)
-    @Query("SELECT COALESCE(SUM(si.qty * b.costPrice), 0) FROM SaleItem si " +
-           "JOIN si.batch b " +
-           "WHERE si.sale.business.businessId = :businessId " +
-           "AND si.sale.createdAt BETWEEN :from AND :to")
+    @Query("SELECT COALESCE(SUM(si.qty * si.costPrice), 0) FROM SaleItem si " +
+            "WHERE si.sale.business.businessId = :businessId " +
+            "AND si.sale.createdAt BETWEEN :from AND :to")
     Double getTotalCostByBusinessAndDateRange(
             @Param("businessId") Long businessId,
             @Param("from") Date from,

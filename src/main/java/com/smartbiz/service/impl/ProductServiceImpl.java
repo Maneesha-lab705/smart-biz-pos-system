@@ -39,8 +39,34 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO> getProductsByBusiness(Long businessId) {
-        return productRepository.findAllByBusinessBusinessId(businessId)
-                .stream().map(productMapper::toDTO).collect(Collectors.toList());
+        List<Product> products = productRepository.findAllByBusinessBusinessId(businessId);
+        products.forEach(p -> System.out.println(
+                "Product: " + p.getProductId() +
+                        " | Name: " + p.getProductName() +
+                        " | TotalQty: " + p.getTotalQty()
+        ));
+        return products.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public ProductDTO toDTO(Product product) {
+        if (product == null) return null;
+
+        ProductDTO dto = new ProductDTO();
+        dto.setProductId(product.getProductId());
+        dto.setProductName(product.getProductName());
+        dto.setStatus(product.getStatus());
+        dto.setSellingPrice(product.getSellingPrice());
+        dto.setBillingPrice(product.getBillingPrice());
+        dto.setQty(product.getTotalQty() != null ? product.getTotalQty() : 0);
+
+        if (product.getBusiness() != null) {
+            dto.setBusinessId(product.getBusiness().getBusinessId());
+            dto.setBusinessName(product.getBusiness().getBusinessName());
+        }
+
+        return dto;
     }
 
     @Override

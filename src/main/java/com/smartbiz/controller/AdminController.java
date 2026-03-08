@@ -2,6 +2,7 @@ package com.smartbiz.controller;
 
 import com.smartbiz.dto.AdminStatsDTO;
 import com.smartbiz.dto.BusinessDTO;
+import com.smartbiz.dto.UserDTO;
 import com.smartbiz.response.ApiResponse;
 import com.smartbiz.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,12 @@ public class AdminController {
     @GetMapping("/stats")
     public ResponseEntity<ApiResponse<AdminStatsDTO>> getStats() {
         return ResponseEntity.ok(ApiResponse.success(adminService.getSystemStats()));
+    }
+
+    /** GET /api/admin/users — All registered users */
+    @GetMapping("/users")
+    public ResponseEntity<ApiResponse<List<UserDTO>>> getAllUsers() {
+        return ResponseEntity.ok(ApiResponse.success(adminService.getAllUsers()));
     }
 
     /** GET /api/admin/businesses — All registered businesses */

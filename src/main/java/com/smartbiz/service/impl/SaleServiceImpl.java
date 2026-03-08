@@ -1,5 +1,6 @@
 package com.smartbiz.service.impl;
 
+import com.smartbiz.dto.PaymentDTO;
 import com.smartbiz.dto.SaleDTO;
 import com.smartbiz.dto.SaleItemDTO;
 import com.smartbiz.entity.*;
@@ -11,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,7 @@ public class SaleServiceImpl implements SaleService {
     private final CustomerRepository customerRepository;
     private final BatchRepository batchRepository;
     private final ProductRepository productRepository;
+    private final PaymentRepository paymentRepository;  // ← Add කළා
     private final SaleMapper saleMapper;
 
     @Override
@@ -62,10 +64,26 @@ public class SaleServiceImpl implements SaleService {
                 SaleItem item = new SaleItem();
                 item.setSale(savedSale);
                 item.setQty(itemDTO.getQty());
-                item.setTotalAmount(itemDTO.getTotalAmount());
+                item.setAmount(itemDTO.getTotalAmount());
+                item.setUnitPrice(itemDTO.getUnitPrice());
+
 
                 Product product = productRepository.findById(itemDTO.getProductId())
                         .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + itemDTO.getProductId()));
+
+                // ✅ Stock qty අඩු කරන්න
+                int currentQty = product.getTotalQty() != null ? product.getTotalQty() : 0;
+                int soldQty = itemDTO.getQty() != null ? itemDTO.getQty() : 0;
+
+                if (currentQty < soldQty) {
+                    throw new RuntimeException("Insufficient stock for product: " + product.getProductName()
+                            + " | Available: " + currentQty + " | Requested: " + soldQty);
+                }
+
+                product.setTotalQty(currentQty - soldQty);
+                productRepository.save(product);
+
+                item.setCostPrice(product.getBillingPrice());
                 item.setProduct(product);
 
                 if (itemDTO.getBatchId() != null) {
@@ -77,6 +95,21 @@ public class SaleServiceImpl implements SaleService {
             }
         }
         savedSale.setSaleItems(items);
+
+        // Payment save කරන්න
+        if (dto.getPayment() != null) {
+            PaymentDTO paymentDTO = dto.getPayment();
+            Payment payment = new Payment();
+            payment.setSale(savedSale);
+            payment.setPaidAt(new Date());
+            payment.setPaymentMethod(paymentDTO.getPaymentMethod());
+            payment.setPaymentStatus(paymentDTO.getPaymentStatus() != null
+                    ? paymentDTO.getPaymentStatus() : "COMPLETED");
+            payment.setAmount(paymentDTO.getAmount() != null
+                    ? BigDecimal.valueOf(paymentDTO.getAmount()) : BigDecimal.ZERO);
+            paymentRepository.save(payment);
+        }
+
         return saleMapper.toDTO(savedSale);
     }
 

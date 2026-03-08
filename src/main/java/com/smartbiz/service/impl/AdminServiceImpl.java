@@ -2,11 +2,14 @@ package com.smartbiz.service.impl;
 
 import com.smartbiz.dto.AdminStatsDTO;
 import com.smartbiz.dto.BusinessDTO;
+import com.smartbiz.dto.UserDTO;
 import com.smartbiz.entity.Business;
 import com.smartbiz.exception.ResourceNotFoundException;
 import com.smartbiz.mapper.BusinessMapper;
+import com.smartbiz.mapper.UserMapper;
 import com.smartbiz.repository.BusinessRepository;
 import com.smartbiz.repository.SaleRepository;
+import com.smartbiz.repository.UserRepository;
 import com.smartbiz.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,8 @@ public class AdminServiceImpl implements AdminService {
     private final BusinessRepository businessRepository;
     private final BusinessMapper     businessMapper;
     private final SaleRepository     saleRepository;
+    private final UserRepository     userRepository;
+    private final UserMapper         userMapper;
 
     @Override
     public AdminStatsDTO getSystemStats() {
@@ -91,6 +96,14 @@ public class AdminServiceImpl implements AdminService {
     public List<BusinessDTO> getAllBusinesses() {
         return businessRepository.findAll().stream()
                 .map(businessMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDTO> getAllUsers() {
+        System.out.println("test");
+        return userRepository.findAll().stream()
+                .map(userMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
