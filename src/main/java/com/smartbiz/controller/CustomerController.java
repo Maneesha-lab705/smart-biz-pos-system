@@ -18,6 +18,7 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<CustomerDTO>> create(@RequestBody CustomerDTO dto) {
+        System.out.println("hello");
         return ResponseEntity.ok(ApiResponse.success("Customer created", customerService.createCustomer(dto)));
     }
 
