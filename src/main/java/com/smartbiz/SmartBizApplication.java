@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(exclude = {
         OpenAiAutoConfiguration.class
 })
+
 public class SmartBizApplication {
 
     public static void main(String[] args) {
