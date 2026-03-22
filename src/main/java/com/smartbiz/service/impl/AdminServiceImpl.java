@@ -1,12 +1,16 @@
 package com.smartbiz.service.impl;
 
 import com.smartbiz.dto.AdminStatsDTO;
+import com.smartbiz.dto.ApiKeyDTO;
 import com.smartbiz.dto.BusinessDTO;
 import com.smartbiz.dto.UserDTO;
+import com.smartbiz.entity.ApiKey;
 import com.smartbiz.entity.Business;
 import com.smartbiz.exception.ResourceNotFoundException;
+import com.smartbiz.mapper.ApiKeyMapper;
 import com.smartbiz.mapper.BusinessMapper;
 import com.smartbiz.mapper.UserMapper;
+import com.smartbiz.repository.ApiKeyRepository;
 import com.smartbiz.repository.BusinessRepository;
 import com.smartbiz.repository.SaleRepository;
 import com.smartbiz.repository.UserRepository;
@@ -14,8 +18,10 @@ import com.smartbiz.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+//import org.springframework.beans.factory.annotation.Value;
+//import jakarta.annotation.PostConstruct;
+
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -26,11 +32,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
+//    @Value("${openai.api.key}")
+//    private String openaiApiKey;
+
     private final BusinessRepository businessRepository;
     private final BusinessMapper     businessMapper;
     private final SaleRepository     saleRepository;
     private final UserRepository     userRepository;
     private final UserMapper         userMapper;
+    private final ApiKeyRepository   apiKeyRepository;
+    private final ApiKeyMapper       apiKeyMapper;
+
+//    @PostConstruct
+//    public void initApiKey() {
+//        if (apiKeyRepository.count() == 0 && openaiApiKey != null && !openaiApiKey.isEmpty()) {
+//            ApiKey apiKey = new ApiKey();
+//            apiKey.setName("OpenAI API Key");
+//            apiKey.setKey(openaiApiKey);
+//            apiKeyRepository.save(apiKey);
+//        }
+//    }
 
     @Override
     public AdminStatsDTO getSystemStats() {
@@ -128,5 +149,25 @@ public class AdminServiceImpl implements AdminService {
         if (!businessRepository.existsById(businessId))
             throw new ResourceNotFoundException("Business not found: " + businessId);
         businessRepository.deleteById(businessId);
+    }
+
+    @Override
+    public List<ApiKeyDTO> getAllApiKeys() {
+        return apiKeyRepository.findAll().stream()
+                .map(apiKeyMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ApiKeyDTO createApiKey(ApiKeyDTO apiKeyDTO) {
+        ApiKey apiKey = apiKeyMapper.toEntity(apiKeyDTO);
+        return apiKeyMapper.toDTO(apiKeyRepository.save(apiKey));
+    }
+
+    @Override
+    public void deleteApiKey(Long id) {
+        if (!apiKeyRepository.existsById(id))
+            throw new ResourceNotFoundException("API Key not found: " + id);
+        apiKeyRepository.deleteById(id);
     }
 }

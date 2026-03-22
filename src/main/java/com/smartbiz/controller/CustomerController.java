@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerController {
 
-    private  final CustomerService customerService;
+    private final CustomerService customerService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<CustomerDTO>> create(@RequestBody CustomerDTO dto) {

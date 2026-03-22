@@ -1,6 +1,7 @@
 package com.smartbiz.controller;
 
 import com.smartbiz.dto.AdminStatsDTO;
+import com.smartbiz.dto.ApiKeyDTO;
 import com.smartbiz.dto.BusinessDTO;
 import com.smartbiz.dto.UserDTO;
 import com.smartbiz.response.ApiResponse;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
 public class AdminController {
 
     private final AdminService adminService;
@@ -59,5 +60,24 @@ public class AdminController {
     public ResponseEntity<ApiResponse<Void>> deleteBusiness(@PathVariable Long id) {
         adminService.deleteBusiness(id);
         return ResponseEntity.ok(ApiResponse.success("Business deleted", null));
+    }
+
+    /** GET /api/admin/api-keys — All API keys */
+    @GetMapping("/api-keys")
+    public ResponseEntity<ApiResponse<List<ApiKeyDTO>>> getAllApiKeys() {
+        return ResponseEntity.ok(ApiResponse.success(adminService.getAllApiKeys()));
+    }
+
+    /** POST /api/admin/api-keys — Create new API key */
+    @PostMapping("/api-keys")
+    public ResponseEntity<ApiResponse<ApiKeyDTO>> createApiKey(@RequestBody ApiKeyDTO apiKeyDTO) {
+        return ResponseEntity.ok(ApiResponse.success("API Key created", adminService.createApiKey(apiKeyDTO)));
+    }
+
+    /** DELETE /api/admin/api-keys/{id} */
+    @DeleteMapping("/api-keys/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteApiKey(@PathVariable Long id) {
+        adminService.deleteApiKey(id);
+        return ResponseEntity.ok(ApiResponse.success("API Key deleted", null));
     }
 }

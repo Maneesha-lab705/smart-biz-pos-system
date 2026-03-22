@@ -2,20 +2,27 @@ package com.smartbiz.service.ai;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smartbiz.repository.ApiKeyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class OpenAiService {
 
-    @Value("${openai.api.key}")
-    private String apiKey;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+    private final ApiKeyRepository apiKeyRepository;
 
     @Value("${openai.api.url}")
     private String apiUrl;
@@ -26,13 +33,12 @@ public class OpenAiService {
     @Value("${openai.api.max-tokens}")
     private int maxTokens;
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
-
-    /**
-     * Send a prompt to OpenAI and return the text response.
-     */
     public String chat(String systemPrompt, String userMessage) {
+        String apiKey = apiKeyRepository.findAll().stream()
+                .findFirst()
+                .map(com.smartbiz.entity.ApiKey::getKey)
+                .orElseThrow(() -> new RuntimeException("No API key found"));
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(apiKey);
